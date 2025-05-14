@@ -19,11 +19,11 @@ export default function App({route}) {
   const Guardar = () => {
     if (!cedula || !nombres) return null;
     const nuevoCliente = {
-      nuevacedula: cedula,
-      nuevosnombres: nombres,
-      nuevosapellidos: apellidos,
-      nuevafechanac: fechaNacimiento,
-      nuevosexo: sexo,
+      cedula: cedula,
+      nombres: nombres,
+      apellidos: apellidos,
+      fechaNacimiento: fechaNacimiento,
+      sexo: sexo,
     };
 
   guardarNuevo(nuevoCliente)

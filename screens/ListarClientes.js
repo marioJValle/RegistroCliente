@@ -8,7 +8,7 @@ export default function ListarClientes({ navigation }) {
   const [clientes, setClientes] = useState([]);
 
   const guardarNuevo = (nuevo) => {
-    setClientes([...clientes, nuevo])
+    setClientes([nuevo, ...clientes])
   };
   const Eliminar = (index) => {
     Alert.alert(
@@ -56,11 +56,11 @@ export default function ListarClientes({ navigation }) {
 
               <View>
                 
-                <Text style={styles.label}>Cédula:<Text >{i.Cedula}</Text> </Text>
-                <Text style={styles.label}>Nombres:<Text >{i.Nombres}</Text> </Text>
-                <Text style={styles.label}>Apellidos:<Text >{i.Apellidos}</Text> </Text>
-                <Text style={styles.label}>Fecha de nacimiento:<Text > {i.FechadeNacimiento}</Text></Text>
-                <Text style={styles.label}>Sexo:<Text >{i.Sexo}</Text> </Text>
+                <Text style={styles.label}>Cédula:<Text >{i.cedula}</Text> </Text>
+                <Text style={styles.label}>Nombres:<Text >{i.nombres}</Text> </Text>
+                <Text style={styles.label}>Apellidos:<Text >{i.apellidos}</Text> </Text>
+                <Text style={styles.label}>Fecha de nacimiento:<Text > {i.fechaNacimiento}</Text></Text>
+                <Text style={styles.label}>Sexo:<Text >{i.sexo}</Text> </Text>
               </View>
               <View style={styles.botoneliminar}>
                 <TouchableOpacity onPress={Eliminar}>
