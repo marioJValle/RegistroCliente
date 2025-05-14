@@ -9,9 +9,10 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="RegistrarCliente">
-        <Stack.Screen name="RegistrarCliente" component={RegistrarCliente} />
+      <Stack.Navigator initialRouteName="ListarClientes">
         <Stack.Screen name="ListarClientes" component={ListarClientes} />
+        <Stack.Screen name="RegistrarCliente" component={RegistrarCliente} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, TextInput, Button, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { useNavigation } from "@react-navigation/native";
 
-export default function App() {
+
+
+export default function App({route}) {
+  const {guardarNuevo} = route.params;
+
   const [cedula, setCedula] = useState("");
   const [nombres, setNombres] = useState("");
   const [apellidos, setApellidos] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
   const [sexo, setSexo] = useState("");
-  const [clientes, setClientes] = useState([]);
+ 
 
-  const navigation = useNavigation();
+
 
   const Guardar = () => {
     if (!cedula || !nombres) return null;
@@ -23,7 +26,7 @@ export default function App() {
       nuevosexo: sexo,
     };
 
-    setClientes([nuevoCliente, ...clientes]);
+  guardarNuevo(nuevoCliente)
     Alert.alert(
       "Datos almacenados",
       `
@@ -92,13 +95,7 @@ export default function App() {
         <Button title="Guardar Cliente" onPress={Guardar} color="green" />
       </View>
 
-      <View style={styles.botonSeparado}>
-        <Button
-          title="Listar Clientes"
-          onPress={() => navigation.navigate("ListarClientes", { clientes })}
-          color="orange"
-        />
-      </View>
+      
     </View>
   );
 }
