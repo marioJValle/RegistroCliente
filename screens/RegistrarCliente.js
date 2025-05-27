@@ -1,21 +1,33 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, Button, Alert } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
-
-
-export default function App({route}) {
-  const {guardarNuevo} = route.params;
+export default function App({ route }) {
+  const { guardarNuevo, clienteEditar } = route.params;
 
   const [cedula, setCedula] = useState("");
   const [nombres, setNombres] = useState("");
   const [apellidos, setApellidos] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
   const [sexo, setSexo] = useState("");
- 
 
-
-
+  useEffect(() => {
+    if (clienteEditar) {
+      setCedula(clienteEditar.cedula);
+      setNombres(clienteEditar.nombres);
+      setApellidos(clienteEditar.apellidos);
+      setFechaNacimiento(clienteEditar.fechaNacimiento);
+      setSexo(clienteEditar.sexo);
+    }
+  }, []);
   const Guardar = () => {
     if (!cedula || !nombres) return null;
     const nuevoCliente = {
@@ -26,9 +38,10 @@ export default function App({route}) {
       sexo: sexo,
     };
 
-  guardarNuevo(nuevoCliente)
-    Alert.alert(
-      "Datos almacenados",
+    guardarNuevo(nuevoCliente);
+      const mensaje = clienteEditar ? 'Cliente Actualizado correctamente' : 'Datos Almacenados Correctamente';
+       Alert.alert(
+      `${mensaje}`,
       `
       Cédula: ${cedula}
       Nombres: ${nombres}
@@ -53,6 +66,7 @@ export default function App({route}) {
         value={cedula}
         onChangeText={setCedula}
         placeholder="Ej: 365-130995-0002H"
+        editable={!clienteEditar}
       />
 
       <Text style={styles.label}>Nombres:</Text>
@@ -92,10 +106,12 @@ export default function App({route}) {
       </View>
 
       <View style={styles.botonSeparado}>
-        <Button title="Guardar Cliente" onPress={Guardar} color="green" />
+        <TouchableOpacity style={styles.boton} onPress={Guardar}>
+          <Text style={styles.textoBoton}>
+            {clienteEditar ? "Actualizar Cliente" : "Guardar Cliente"}
+          </Text>
+        </TouchableOpacity>
       </View>
-
-      
     </View>
   );
 }
