@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import React from "react";
 import {
   View,
@@ -22,6 +22,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import appFirebase from "../BaseDatos/FireBase";
+import { useFocusEffect } from "@react-navigation/native";
 
 const db = getFirestore(appFirebase);
 
@@ -61,9 +62,7 @@ export default function ListarClientes({ navigation }) {
     });
     setClientes(d);
   };
-
-  useEffect(() => {
-    const cargarClientes = async () => {
+const cargarClientes = async () => {
       const q = query(collection(db, "clientes"));
       const querySnapshot = await getDocs(q);
       const lista = [];
@@ -73,11 +72,15 @@ export default function ListarClientes({ navigation }) {
       setClientes(lista);
       setClientesFiltrados(lista); 
     };
+  useFocusEffect(
+    useCallback(() => {
     cargarClientes();
-  }, []);
+    
+  }, []));
 
   const guardarNuevo = async (nuevo) => {
     await setDoc(doc(db, "clientes", nuevo.cedula), nuevo);
+    
   };
   const Eliminar = (cedula) => {
     Alert.alert(
@@ -93,6 +96,7 @@ export default function ListarClientes({ navigation }) {
           style: "destructive",
           onPress: async () => {
             await deleteDoc(doc(db, "clientes", cedula));
+            await cargarClientes();
           },
         },
       ],
