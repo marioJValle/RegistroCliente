@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { TextInput } from "react-native";
 
 import {
   collection,
@@ -26,6 +27,29 @@ const db = getFirestore(appFirebase);
 
 export default function ListarClientes({ navigation }) {
   const [clientes, setClientes] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [clientesFiltrados, setClientesFiltrados] = useState([]);
+
+  const buscarCliente = (texto) => {
+    setSearchTerm(texto);
+    if (texto.trim() === "") {
+      setClientesFiltrados(clientes);
+      return;
+    }
+
+    const resultados = clientes.filter(cliente => {
+      const textoLower = texto.toLowerCase();
+      return (
+        cliente.cedula.toLowerCase().includes(textoLower) ||
+        cliente.nombres.toLowerCase().includes(textoLower) ||
+        cliente.apellidos.toLowerCase().includes(textoLower) ||
+        cliente.fechaNacimiento.toLowerCase().includes(textoLower) ||
+        cliente.sexo.toLowerCase().includes(textoLower)
+      );
+    });
+
+    setClientesFiltrados(resultados);
+  };
 
   const LeerDatos = async () => {
     const q = query(collection(db, "clientes"));
@@ -39,8 +63,18 @@ export default function ListarClientes({ navigation }) {
   };
 
   useEffect(() => {
-    LeerDatos();
-  }, [clientes]);
+    const cargarClientes = async () => {
+      const q = query(collection(db, "clientes"));
+      const querySnapshot = await getDocs(q);
+      const lista = [];
+      querySnapshot.forEach((doc) => {
+        lista.push(doc.data());
+      });
+      setClientes(lista);
+      setClientesFiltrados(lista); 
+    };
+    cargarClientes();
+  }, []);
 
   const guardarNuevo = async (nuevo) => {
     await setDoc(doc(db, "clientes", nuevo.cedula), nuevo);
@@ -79,14 +113,29 @@ export default function ListarClientes({ navigation }) {
             <AntDesign name="adduser" size={30} color="green" />
           </TouchableOpacity>
         </View>
+        
       </View>
+      <TextInput
+          style={{
+            backgroundColor: "#fff",
+            padding: 10,
+            borderRadius: 10,
+            borderColor: "#ccc",
+            borderWidth: 1,
+            marginBottom: 15,
+          }}
+          inputMode="text"
+          placeholder="Buscar por cédula, nombre, sexo, etc..."
+          value={searchTerm}
+          onChangeText={buscarCliente}
+        />
       {clientes.length === 0 ? (
         <View style={styles.card}>
           <Text> No hay clientes registrados.</Text>
         </View>
       ) : (
         <ScrollView style={styles.lista}>
-          {clientes.map((i, index) => (
+          {clientesFiltrados.map((i, index) => (
             <View key={index} style={styles.card}>
               <View>
                 <Text style={styles.label}>
@@ -109,7 +158,14 @@ export default function ListarClientes({ navigation }) {
                 <TouchableOpacity onPress={() => Eliminar(i.cedula)}>
                   <MaterialIcons name="delete" size={40} color="red" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('RegistrarCliente',{guardarNuevo, clienteEditar: i})}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("RegistrarCliente", {
+                      guardarNuevo,
+                      clienteEditar: i,
+                    })
+                  }
+                >
                   <MaterialIcons name="edit" size={40} color="red" />
                 </TouchableOpacity>
               </View>
